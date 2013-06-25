@@ -1,0 +1,73 @@
+                            <!-- Article print loop -->
+                            <?php 
+                            	$this->jQuery()->enable();
+                            	
+                                // Set per article page mockup
+                                // Start foreach loop 
+                                foreach($this->result as $article):
+                                
+                                // Create a DOM element to show only a part of the arfticle content
+	                            if($this->multiplicity) {
+								   	$domDoc = DOMDocument::loadHTML(substr($article->getContent(), 0, 300) . '...');
+								    $domDoc = strip_tags($domDoc->saveXML($domDoc), '<p><a><ul><li><strike><b>');
+	                            } else {
+	                            	$domDoc = $article->getContent();
+	                            }
+                            ?>
+							<div class="art-post">
+								<div class="art-post-tl"></div>
+								<div class="art-post-tr"></div>
+								<div class="art-post-bl"></div>
+								<div class="art-post-br"></div>
+								<div class="art-post-tc"></div>
+								<div class="art-post-bc"></div>
+								<div class="art-post-cl"></div>
+								<div class="art-post-cr"></div>
+								<div class="art-post-cc"></div>
+								<div class="art-post-body">
+								<div class="art-post-inner art-article">
+								<div class="cleared"></div>
+							    <?php 
+								if(!$this->multiplicity) {
+										echo $this->socialHelper(
+												'http://' . $_SERVER['SERVER_NAME'] . 
+												$this->url(
+												array(
+									    			'controller'	=> 'index',
+									    			'action'		=> 'articles',
+									    			'section'		=> $article->getSection(),
+									    			'article'		=> $article->getUrlRewrite()),
+									    			'article',
+									    			true));
+								}
+								?>
+							    <div class="cleared"></div>
+								<h2 class="art-postheader">
+                            	<?php 
+									echo '<a href="'; 
+									echo $this->url(
+												array(
+									    			'controller'	=> 'index',
+									    			'action'		=> 'articles',
+									    			'section'		=> $article->getSection(),
+									    			'article'		=> $article->getUrlRewrite()),
+									    			'article',
+									    			true);
+									echo '">' . $article->getTitle() . '</a>' ;
+								?>
+								</h2>
+							    <div class="art-postcontent">
+							    <!-- article-content --><p>
+							    <?php 
+							    	echo $domDoc;
+								?>
+								</p>
+								<!-- /article-content -->
+							    </div>
+							    <div class="cleared"></div>
+							    </div>
+							    <div class="cleared"></div>
+							    </div>
+							</div>
+							<?php endforeach; ?> 
+                            <!-- /Article print loop -->

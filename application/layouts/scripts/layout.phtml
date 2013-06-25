@@ -1,0 +1,191 @@
+<?php 
+$this->headLink()->appendStylesheet('/css/style.css', 'screen,projection')
+        		 ->headLink(array('rel' => 'favicon', 'href' => '/favicon.ico'), 'PREPENT');?>
+<?php echo $this->doctype(); ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<?php echo $this->headMeta(); ?>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<?php echo $this->headTitle() . PHP_EOL; ?>
+<?php echo $this->headLink() . PHP_EOL; ?>
+<?php echo $this->jQuery() . PHP_EOL; ?>
+<?php echo $this->headScript() . PHP_EOL; ?>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+</head>
+<body>
+    <div id="art-page-background-gradient"></div>
+    <div id="art-main">
+        <div class="art-sheet">
+            <div class="art-sheet-tl"></div>
+            <div class="art-sheet-tr"></div>
+            <div class="art-sheet-bl"></div>
+            <div class="art-sheet-br"></div>
+            <div class="art-sheet-tc"></div>
+            <div class="art-sheet-bc"></div>
+            <div class="art-sheet-cl"></div>
+            <div class="art-sheet-cr"></div>
+            <div class="art-sheet-cc"></div>
+            <div class="art-sheet-body">
+                <div class="art-header">
+                    <div class="art-header-jpeg"></div>
+                    <div class="art-logo">
+                        <h1 id="name-text" class="art-logo-name"><a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'index'), 'action'); ?>"><b>Jasper van Herpt . com</b></a></h1>
+                    </div>
+                </div>
+                <div class="art-nav">
+                	<div class="l"></div>
+                	<div class="r"></div>
+                	<?php echo $this->navigation()->menu()->setMinDepth(1)
+                										  ->setMaxDepth(3)
+                										  ->renderMenu(null, array('ulClass' => 'art-menu')); ?>
+                </div>
+                <div class="art-content-layout">
+					<div class="art-content-layout-row">
+						<div class="art-layout-cell art-content">
+							<div class="art-menu-breadcrumb">
+								<p>
+								<?php echo $this->navigation()->breadcrumbs()
+			                								  ->setLinkLast(true)
+			                								  ->setMinDepth(1)
+			                								  ->setSeparator(' | ')
+			                								  ->render();
+			                	?>
+			                	</p>
+		                	</div>
+							<div class="cleared"></div>
+							<?php echo $this->layout()->content; ?>
+						</div>
+						<div class="art-layout-cell art-sidebar1">
+                            <div class="art-vmenublock">
+                                <div class="art-vmenublock-tl"></div>
+                                <div class="art-vmenublock-tr"></div>
+                                <div class="art-vmenublock-bl"></div>
+                                <div class="art-vmenublock-br"></div>
+                                <div class="art-vmenublock-tc"></div>
+                                <div class="art-vmenublock-bc"></div>
+                                <div class="art-vmenublock-cl"></div>
+                                <div class="art-vmenublock-cr"></div>
+                                <div class="art-vmenublock-cc"></div>
+                                <div class="art-vmenublock-body">
+                                            <div class="art-vmenublockheader">
+                                                 <div class="t">Navigatie</div>
+                                            </div>
+                                            <div class="art-vmenublockcontent">
+                                                <div class="art-vmenublockcontent-body">
+                                            <!-- block-content -->
+                                               <?php echo $this->navigation()->menu()->setMinDepth(1)
+                                               										 ->setMaxDepth(10)
+                                               										 ->renderMenu(null, array(
+                                                																'ulClass' => 'art-vmenu')); ?>
+                                            <!-- /block-content -->
+                                            
+                                            		<div class="cleared"></div>
+                                                </div>
+                                            </div>
+                            		<div class="cleared"></div>
+                                </div>
+                            </div>
+                            <?php if($this->adAllowed == true) { ?>
+                            <div class="art-block">
+                                <div class="art-block-tl"></div>
+                                <div class="art-block-tr"></div>
+                                <div class="art-block-bl"></div>
+                                <div class="art-block-br"></div>
+                                <div class="art-block-tc"></div>
+                                <div class="art-block-bc"></div>
+                                <div class="art-block-cl"></div>
+                                <div class="art-block-cr"></div>
+                                <div class="art-block-cc"></div>
+                                <div class="art-block-body">
+                                	<!-- block content -->
+									<script type="text/javascript"><!--
+										google_ad_client = "ca-pub-1996645816457946";
+										/* Artikel blok */
+										google_ad_slot = "6396921030";
+										google_ad_width = 120;
+										google_ad_height = 600;
+									//-->
+									</script>
+									<script type="text/javascript"
+										src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+									</script>
+                                	<!-- /block content -->
+                                </div>
+                            </div>
+                            <?php } else { ?>
+                            <div class="art-block">
+                                <div class="art-block-tl"></div>
+                                <div class="art-block-tr"></div>
+                                <div class="art-block-bl"></div>
+                                <div class="art-block-br"></div>
+                                <div class="art-block-tc"></div>
+                                <div class="art-block-bc"></div>
+                                <div class="art-block-cl"></div>
+                                <div class="art-block-cr"></div>
+                                <div class="art-block-cc"></div>
+                                <div class="art-block-body"></div>
+                            </div>
+                            <div class="art-block">
+                                <div class="art-block-tl"></div>
+                                <div class="art-block-tr"></div>
+                                <div class="art-block-bl"></div>
+                                <div class="art-block-br"></div>
+                                <div class="art-block-tc"></div>
+                                <div class="art-block-bc"></div>
+                                <div class="art-block-cl"></div>
+                                <div class="art-block-cr"></div>
+                                <div class="art-block-cc"></div>
+                                <div class="art-block-body">
+                                            <div class="art-blockheader">
+                                                 <div class="t">Contact Info</div>
+                                            </div>
+                                            <div class="art-blockcontent">
+                                                <div class="art-blockcontent-tl"></div>
+                                                <div class="art-blockcontent-tr"></div>
+                                                <div class="art-blockcontent-bl"></div>
+                                                <div class="art-blockcontent-br"></div>
+                                                <div class="art-blockcontent-tc"></div>
+                                                <div class="art-blockcontent-bc"></div>
+                                                <div class="art-blockcontent-cl"></div>
+                                                <div class="art-blockcontent-cr"></div>
+                                                <div class="art-blockcontent-cc"></div>
+                                                <div class="art-blockcontent-body">
+                                            <!-- block-content -->
+                                                            <div>
+                                                                  <a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'contact'), 'action'); ?>"><img src="/css/images/contact.jpg" alt="contact image" style="margin: 0 auto;display:block;width:95%" /></a>
+                                                            <br />
+                                                            <b>Jasper van Herpt</b><br />
+                                                            Netherlands<br />
+                                                            Email: <a href="mailto:info@jaspervanherpt.com">info@jaspervanherpt.com</a><br />
+                                                            <br />
+                                                            </div>
+                                            <!-- /block-content -->
+                                            
+                                            		<div class="cleared"></div>
+                                                </div>
+                                            </div>
+                            		<div class="cleared"></div>
+                                </div>
+                            </div>
+                            <?php } ?>
+                	</div>
+                </div>
+            </div>
+                <div class="cleared"></div>
+                <div class="art-footer">
+                    <div class="art-footer-inner">
+                        <div class="art-footer-text">
+                            <p><a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'contact'), 'action'); ?>">Contact</a> | <a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'about'), 'action'); ?>">About</a> | <a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'sitemap'), 'action'); ?>">Sitemap</a><br />
+                                Copyright &copy; 2010 <a href="<?php echo $this->url(array('controller' => 'index', 'action' => 'index')); ?>">jaspervanherpt.com.</a> All Rights Reserved.</p>
+                        </div>
+                    </div>
+                    <div class="art-footer-background"></div>
+                </div>
+        		<div class="cleared"></div>
+            </div>
+        </div>
+        <div class="cleared"></div>
+        <p class="art-page-footer">Web Template door <a title="Joomla Web Template door Dionne Willemse" href="http://www.dionnewillemse.com/" alt="Joomla Web Template door Dionne Willemse">Dionne Willemse</a>.</p>
+    </div>					
+</body>
+</html>
