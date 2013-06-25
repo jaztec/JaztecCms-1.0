@@ -18,43 +18,44 @@ define('DS', DIRECTORY_SEPARATOR);
  * 1.0 - Setup the plugin<br>
  * 1.1 - Using Database<br>
  */
-class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extends Zend_Controller_Plugin_Abstract {
-	
+class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extends Zend_Controller_Plugin_Abstract
+{
     /**
         * Holds the acl object for further processing
-        * 
+        *
         * @var Zend_Acl
         */
     protected $_acl = null;
 
     /**
         * Holds the auhentication object
-        * 
+        *
         * @var Zend_Auth
         */
     protected $_auth = null;
 
     /**
         * Holds the error logging object
-        * 
+        *
         * @var Jaztec_Framework_Log
         */
     protected $_logger = null;
 
     /**
-     * @var Binairy flags 
+     * @var Binairy flags
      */
     const   ACL_NOTALLOWED          = 0x01;
     const   ACL_NOIDENTITY          = 0x02;
     const   ACL_ALLOWED             = 0x04;
     const   ACL_INVALIDROLE         = 0x08;
     const   ACL_INVALIDRESOURCE     = 0x10;
-    
+
     /**
         * Sets up a Zend_Acl object
-        * 
+        *
         */
-    public function __construct(Zend_Auth $auth) {
+    public function __construct(Zend_Auth $auth)
+    {
             // Setup the internal Acl object
             $this->_acl = new Zend_Acl();
             // Setup the internal Auth object
@@ -66,29 +67,30 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Setup the internal acl
-        * 
+        *
         * @param Zend_Controller_Request_Abstract $request
         * @return Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader
         */
-    protected function _configurate(Zend_Controller_Request_Abstract $request) {
-            // Get the requested module 
+    protected function _configurate(Zend_Controller_Request_Abstract $request)
+    {
+            // Get the requested module
         $module = $request->getModuleName();
             // Load module specific roles into the internal acl variable if it exists
             $roles = $this->_loadRoles($module);
-            if($roles) {
+            if ($roles) {
                     $this->_addRolesToAcl($roles);
             }
             // Load module specific resources into the internal acl variable if it exists
             $resources = $this->_loadResources($module);
-            if($resources) {
+            if ($resources) {
                     $this->_addResourcesToAcl($resources);
             }
             // Connect the roles and resources with privileges
             $privileges = $this->_loadPrivileges($module);
-            if($privileges) {
+            if ($privileges) {
                     $this->_addPrivilegesToAcl($privileges);
             }
-            
+
             // Finally add all known resources to the ACl
             $this->_completeResourceAcl($request);
 
@@ -98,19 +100,20 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
             return $this;
     }
 
-    protected function _completeResourceAcl(Zend_Controller_Request_Abstract $request){
+    protected function _completeResourceAcl(Zend_Controller_Request_Abstract $request)
+    {
         $module = $request->getModuleName();
         $front = Zend_Controller_Front::getInstance();
-        $dirs['default'] = $front->getModuleDirectory('default') 
-	                         . DIRECTORY_SEPARATOR . 'controllers/';
-        if($module !== 'default') {
-            $dirs[$module] = $front->getModuleDirectory($module) 
-	                         . DIRECTORY_SEPARATOR . 'controllers/';
+        $dirs['default'] = $front->getModuleDirectory('default')
+                             . DIRECTORY_SEPARATOR . 'controllers/';
+        if ($module !== 'default') {
+            $dirs[$module] = $front->getModuleDirectory($module)
+                             . DIRECTORY_SEPARATOR . 'controllers/';
         }
-        foreach($dirs as $mod => $path) {
+        foreach ($dirs as $mod => $path) {
             // A module! lets check and add
             $modStr = 'module:'. $mod;
-            if(!$this->_acl->has($modStr)) {
+            if (!$this->_acl->has($modStr)) {
                 $this->_acl->addResource($modStr);
                 $this->_logger->debug('Loading resource: ' . $modStr);
             }
@@ -119,7 +122,7 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
                 if (strstr($file, "Controller.php") !== false) {
                     // We've got an controller, lets check and add
                     $conStr = 'controller:'. $mod .':'. strtolower(substr($file, 0, strpos($file,"Controller.php")));
-                    if(!$this->_acl->has($conStr)) {
+                    if (!$this->_acl->has($conStr)) {
                         $this->_acl->addResource ($conStr, $modStr);
                         $this->_logger->debug('Loading resource: ' . $conStr);
                     }
@@ -130,12 +133,13 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
     /**
         * Load the roles from the basic application and/or module
         * specific roles.
-        * 
+        *
         * @param	string	$module Load roles from respective modules, defaults to default module
         * @throws 	Jaztec_Plugin_Exception
         * @return 	array|null This function returns an array or null when no file is found
         */
-    protected function _loadRoles($module = 'default') {
+    protected function _loadRoles($module = 'default')
+    {
             $dbTable = new Jaztec_Framework_Acl_DbTable_Roles();
             $stmt = $dbTable->select()
                             ->setIntegrityCheck(false)
@@ -158,11 +162,12 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Load the resources from the basic application and/or module specific resources, module resources have to be specified inside the modules by a resource xml file
-        * 
+        *
         * @param	string	$module Load resources from respective modules, defaults to default module
         * @return 	array|null This function returns an array or null when no file is found
         */
-    protected function _loadResources($module = 'default') {
+    protected function _loadResources($module = 'default')
+    {
         $dbTable = new Jaztec_Framework_Acl_DbTable_Resources();
         $stmt = $dbTable->select()
                         ->setIntegrityCheck(false)
@@ -180,7 +185,7 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
         $stmt = $stmt->order('re.sort');
         $resources = $dbTable->fetchAll($stmt);
         $resources = $resources->toArray();
-        
+
 //            var_dump($stmt->assemble());
 //            var_dump($resources->toArray());
         return $resources;
@@ -188,11 +193,12 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Load the privileges from the basic application and/or module specific privileges, module privileges have to be specified inside the modules by a resource xml file
-        * 
+        *
         * @param	string	$module Load privileges from respective modules, defaults to default module
         * @return 	array|null This function returns an array or null when no file is found
         */
-    protected function _loadPrivileges($module = 'default') {
+    protected function _loadPrivileges($module = 'default')
+    {
             $dbTable = new Jaztec_Framework_Acl_DbTable_Privileges();
             $stmt = $dbTable->select()
                     ->setIntegrityCheck(false)
@@ -222,23 +228,24 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Fills the internal acl var with the roles
-        * 
+        *
         * @param 	array $roles
         * @throws 	Jaztec_Plugin_Exception
         * @return 	void
         */
-    protected function _addRolesToAcl($roles) {
-            if(!is_array($roles)) {
+    protected function _addRolesToAcl($roles)
+    {
+            if (!is_array($roles)) {
                     $this->_logger->crit("Acl roles must be passed as array");
                     require_once 'Jaztec/Plugin/Exception.php';
                     throw new Jaztec_Plugin_Exception('Acl roles must be passed as array');
             }
             try {
-                    foreach($roles as $r) {
+                    foreach ($roles as $r) {
                             $role = new Jaztec_Framework_Acl_Role($r['name']);
                             $this->_logger->debug('Loading role: ' . $r['name']);
-                            if(!$this->_acl->hasRole($role)) {
-                                    if(array_key_exists('parent', $r)) {
+                            if (!$this->_acl->hasRole($role)) {
+                                    if (array_key_exists('parent', $r)) {
                                             $this->_acl->addRole($role, $r['parent']);
                                     } else {
                                             $this->_acl->addRole($role);
@@ -252,26 +259,27 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Fills the internal acl var with resources
-        * 
+        *
         * @param 	array $resources
         * @throws 	Jaztec_Plugin_Exception
         * @return 	void
         */
-    protected function _addResourcesToAcl($resources) {
-            if(!is_array($resources)) {
+    protected function _addResourcesToAcl($resources)
+    {
+            if (!is_array($resources)) {
                 $this->_logger->crit("Acl resources must be passed as array");
                 require_once 'Jaztec/Plugin/Exception.php';
                 throw new Jaztec_Plugin_Exception('Acl resources must be passed as array');
             }
             try {
-                foreach($resources as $r) {
+                foreach ($resources as $r) {
                     $resource = new Jaztec_Framework_Acl_Resource($r['name']);
                     $this->_logger->debug('Loading resource: ' . $r['name']);
-                    if(!$this->_acl->has($resource)) {
-                        if(array_key_exists('parent', $r)) {
+                    if (!$this->_acl->has($resource)) {
+                        if (array_key_exists('parent', $r)) {
                             $this->_acl->addResource($resource, $r['parent']);
                         } else {
-                            $this->_acl->addResource($resource);	
+                            $this->_acl->addResource($resource);
                         }
                     }
                 }
@@ -282,24 +290,25 @@ class Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader extend
 
     /**
         * Connects the resources and roles by privileges
-        * 
+        *
         * @param 	array $privileges
         * @throws 	Jaztec_Plugin_Exception
         * @return 	void
         */
-protected function _addPrivilegesToAcl($privileges) {
-    if(!is_array($privileges)) {
+protected function _addPrivilegesToAcl($privileges)
+{
+    if (!is_array($privileges)) {
         $this->_logger->crit("Acl privileges must be passed as array");
         require_once 'Jaztec/Plugin/Exception.php';
         throw new Jaztec_Plugin_Exception('Acl privileges must be passed as array');
     }
     try {
         // Start inserting roles into the Acl object
-        foreach($privileges as $privilege) {
+        foreach ($privileges as $privilege) {
             $role = isset($privilege['role']) ? $privilege['role'] : null;
             $resource = isset($privilege['resource']) ? $privilege['resource'] : null;
             $priv = isset($privilege['privilege']) ? $privilege['privilege'] : null;
-            if($privilege['type'] === 'allow') {
+            if ($privilege['type'] === 'allow') {
                 $this->_acl->allow($role, $resource, $priv);
                 $this->_logger->debug("Allowing " . $role . " " . $priv . " on " . $resource);
             } else {
@@ -316,11 +325,12 @@ protected function _addPrivilegesToAcl($privileges) {
 
     /**
         * Checks whether the request can be responded or if the user has to login/get better credentials
-        * 
+        *
         * @param Zend_Controller_Request_Abstract $request
         * @return Uint8 Integer value to determine the outcome of the credentials
         */
-    protected function _checkCredentials(Zend_Controller_Request_Abstract $request) {
+    protected function _checkCredentials(Zend_Controller_Request_Abstract $request)
+    {
         // Load the request values
         $resource = 'controller:' . $request->getModuleName() . ':' . $request->getControllerName();
         $action = $request->getActionName();
@@ -329,20 +339,20 @@ protected function _addPrivilegesToAcl($privileges) {
         // Load identity if set
         $hasIdentity = $this->_auth->hasIdentity();
         // Check if we have an identity else define guest
-        if($hasIdentity) {
+        if ($hasIdentity) {
             $role = $this->_auth->getIdentity()->role;
         } else {
             $role = 'guest';
         }
         // Set not allowed as default
         $allowed = self::ACL_NOTALLOWED;
-        
+
         $this->_logger->debug('The role to be tested is: ' . $role . ' performing ' . $action . ' on resource ' . $resource);
-        if($this->_acl->has($resource)) {
-            if($this->_acl->hasRole($role)) {
+        if ($this->_acl->has($resource)) {
+            if ($this->_acl->hasRole($role)) {
                 try {
-                    if(!$this->_acl->isAllowed($role,$resource,$action)) {
-                        if(!$hasIdentity) {
+                    if (!$this->_acl->isAllowed($role,$resource,$action)) {
+                        if (!$hasIdentity) {
                             $allowed = self::ACL_NOIDENTITY;
                             $this->_logger->debug($role . " is anonymous, registration needed");
                         } else {
@@ -352,7 +362,7 @@ protected function _addPrivilegesToAcl($privileges) {
                         $allowed = self::ACL_ALLOWED;
                         $this->_logger->debug($role . " is allowed at this resource");
                     }
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     $this->_logger->err($e);
             }
         } else {
@@ -369,18 +379,19 @@ protected function _addPrivilegesToAcl($privileges) {
 
     /**
         * Checks to see if there is a post request and acts opun it
-        * 
+        *
         * @param Zend_Controller_Request_Abstract $request
         * @return Jaztec_Framework_Controller_Plugin_FrameworkAclAuthenticationLoader
         */
-    protected function _validateForm(Zend_Controller_Request_Abstract $request) {
+    protected function _validateForm(Zend_Controller_Request_Abstract $request)
+    {
         $this->_logger->debug('Starting form validation');
         // Add the needed Form
         $form = new Jaztec_Framework_Form_Login();
         // Check if the request is POST, otherwise no need for checking
-        if($request->isPost()) {
+        if ($request->isPost()) {
             // Check if the Form has been filled completely
-            if($form->isValid($_POST)) {
+            if ($form->isValid($_POST)) {
                 $this->_logger->debug('Form is marked valid');
                 // Setup the adapter and check if its authenticated
                 $adapter = $this->_getAuthAdapter();
@@ -390,13 +401,13 @@ protected function _addPrivilegesToAcl($privileges) {
                 // Report the loggin
                 $this->_logger->notice($request->getParam('username') . " is logged in");
                 // Write the user to the storage if authenticated
-                if($result->isValid()) {
+                if ($result->isValid()) {
                     $storage = $this->_auth->getStorage();
                     $storage->write($adapter->getResultRowObject(
                             array(
-                                'id', 
-                                'username', 
-                                'email', 
+                                'id',
+                                'username',
+                                'email',
                                 'role'
                             )
                         )
@@ -410,10 +421,11 @@ protected function _addPrivilegesToAcl($privileges) {
 
     /**
         * Return an adapter to check credentials with
-        * 
+        *
         * @return Zend_Auth_Adapter_DbTable
         */
-    protected function _getAuthAdapter() {
+    protected function _getAuthAdapter()
+    {
         $adapter = new Zend_Auth_Adapter_DbTable(Zend_Db_Table::getDefaultAdapter());
 
         $adapter->setTableName('view_users')
@@ -422,20 +434,22 @@ protected function _addPrivilegesToAcl($privileges) {
             ->setCredentialTreatment('MD5(CONCAT(?,signature)) AND active != 0');
 
         $this->_logger->debug('Returning auth adapter');
+
         return $adapter;
     }
 
     /**
-     * 
+     *
      * (non-PHPdoc)
      * @see Zend_Controller_Plugin_Abstract::preDispatch()
      */
-    public function preDispatch(Zend_Controller_Request_Abstract $request) {
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
         $this->_logger->debug("Start " . get_class() . "'s preDispatch routine");
         // Make sure the internal acl is loaded
         $this->_configurate($request);
         // Test if this request is legit
-        switch($this->_checkCredentials($request)){
+        switch ($this->_checkCredentials($request)) {
             case self::ACL_ALLOWED:
                 break;
             case self::ACL_NOIDENTITY:

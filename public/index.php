@@ -1,8 +1,7 @@
 <?php
 
 defined('JAZTEC_PUBLIC_ROOT')
-	|| define('JAZTEC_PUBLIC_ROOT', realpath(__FILE__));
-
+    || define('JAZTEC_PUBLIC_ROOT', realpath(__FILE__));
 
 // Define path to application directory
 defined('APPLICATION_PATH')
